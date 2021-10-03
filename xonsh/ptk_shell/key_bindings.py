@@ -259,6 +259,13 @@ def load_xonsh_bindings(ptk_bindings: KeyBindingsBase) -> KeyBindingsBase:
         env = XSH.env
         event.cli.current_buffer.insert_text(env.get("INDENT"))
 
+    @handle(Keys.Tab, filter=~tab_insert_indent & ~tab_menu_complete)
+    def menu_complete_prefix(event):
+        """In default mode, stop at the common prefix."""
+        b = event.current_buffer
+        if not b.complete_state:
+            b.start_completion(insert_common_part=True)
+
     @handle(Keys.Tab, filter=~tab_insert_indent & tab_menu_complete)
     def menu_complete_select(event):
         """Start completion in menu-complete mode, or tab to next completion"""
